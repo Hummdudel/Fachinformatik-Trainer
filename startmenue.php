@@ -21,13 +21,13 @@ include ("dbconnect.php");
         <article class="flexbox">
             <div class="container-100">
                 <?php
-                echo"<h1>Willkommen, $username</h1>";
+                echo"<h1>Willkommen, $username!</h1>";
                 ?>
             </div>
         </article>
         <article class="flexbox">
             <?php
-            if ($name !== "gast") {
+            if ($name !== "Gast") {
             ?>
                 <div class="container-33">
                     <h2><a class="linkIntern" href="k_verwalten.php">Karteikarten<br>verwalten</a></h2>

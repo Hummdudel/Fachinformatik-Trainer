@@ -40,8 +40,8 @@ if(isset($_GET["login"])) {
             <div class="menu-button"></div>
         </label>
         <ul class="menu">
-            <li><a href="index.html">Start</a></li>
-            <li><a class="active" href="user_login.php">Login</a></li>
+            <li><a href="index.html">FI-Trainer</a></li>
+            <li><a class="active" href="user_login.php">Anmelden</a></li>
             <li><a href="user_register.php">Registrieren</a></li>
             <li><a href="info.html">Info</a></li>
         </ul>
@@ -51,13 +51,15 @@ if(isset($_GET["login"])) {
     <section class="main-container">
         <article class="flexbox">
             <div class="container-100">
+                <h1>Anmelden</h1><br>
                 <form action="?login=1" method="post">
                     Username:<br>
                     <input type="text" size="30" maxlength="250" name="name"><br><br>
                     Passwort:<br>
                     <input type="password" size="30" maxlength="250" name="passwort"><br><br>
-                    <input type="submit" value="Abschicken">
-                </form>
+                    <input type="submit" value="Anmelden">
+                </form><br><br><br>
+                <a style="color: white" href="guest_login.php">Als Gast anmelden</a>
             </div>
         </article>
     </section>

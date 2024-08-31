@@ -19,8 +19,8 @@ include("dbconnect.php");
             <div class="menu-button"></div>
         </label>
         <ul class="menu">
-            <li><a href="index.html">Start</a></li>
-            <li><a href="user_login.php">Login</a></li>
+            <li><a href="index.html">FI-Trainer</a></li>
+            <li><a href="user_login.php">Anmelden</a></li>
             <li><a class="active" href="user_register.php">Registrieren</a></li>
             <li><a href="info.html">Info</a></li>
         </ul>
@@ -106,7 +106,7 @@ if(isset($_GET["register"])) {
                     Passwort wiederholen:<br>
                     <input type="password" size="30" maxlength="250" name="passwort2"><br><br>
 
-                    <input type="submit" value="Abschicken">
+                    <input type="submit" value="Registrieren">
                 </form>
             </div>
         </article>

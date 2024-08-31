@@ -13,7 +13,7 @@ $name = $_SESSION['username'];
             <a class="<?= in_array(basename($_SERVER['PHP_SELF']), ['k_verwalten.php', 'k_anlegen.php', 'k_bearbeiten.php', 'k_freigeben_admin.php', 'k_loeschen.php', 'k_veroeffentlichen.php', 'k_lernen.php', 'k_lernen_action.php', 'k_abfragen.php', 'k_abfragen_action.php', 'k_uebersicht.php']) ? 'active' : '' ?>" href="javascript:void(0)" class="dropbtn">Karteikarten</a>
             <div class="dropdown-content">
                 <?php
-                if ($name == 'gast') {
+                if ($name == 'Gast') {
                 ?>
                 <a href="k_lernen.php">lernen</a>
                 <?php
@@ -33,7 +33,7 @@ $name = $_SESSION['username'];
             <a class="<?= in_array(basename($_SERVER['PHP_SELF']), ['lernerfolg.php', 'user_change_password.php']) ? 'active' : '' ?>" href="javascript:void(0)" class="dropbtn"><img src="<?= in_array(basename($_SERVER['PHP_SELF']), ['lernerfolg.php', 'user_change_password.php']) ? 'images/member-list_16069712.svg' : 'images/member-list-inverted02.png' ?>" alt="Benutzer" style="width:15px;height:15px;"></a>
             <div class="dropdown-content">
                 <?php
-                if ($name == 'gast') {
+                if ($name == 'Gast') {
                     ?>
                     <a href="user_logout.php">Logout</a>
                     <?php

@@ -98,7 +98,7 @@ $zeigeDetails = false;
                     ?>
                     <form action="?auswahlModul=1" method="post">
                         <?php
-                        if ($username !== "gast") {
+                        if ($username !== "Gast") {
                         ?>
                         Umfang:<br>
                         <input type="radio" id="eig" name="umfang" value="eigene" checked>
