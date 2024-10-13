@@ -1,5 +1,6 @@
 <?php
-session_start();
+include("security.php");
+my_session_start();
 include ("user_handling.php");
 include("dbconnect.php");
 
@@ -66,8 +67,8 @@ $zeigeDetails = false;
                 if (isset($_GET["karte"])) {
                     $error = false;
 
-                    $frage = $_POST["frage"];
-                    $antwort = $_POST["antwort"];
+                    $frage = test_input($_POST["frage"]);
+                    $antwort = test_input($_POST["antwort"]);
                     $kartenid = $_POST["kartenid"]; // Wert aus dem versteckten Feld abrufen
 
                     //Überprüfe, dass es noch keine andere Karte mit dieser Frage gibt

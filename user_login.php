@@ -1,26 +1,36 @@
 <?php
-session_start();
+include("security.php");
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_secure', 1);
+ini_set('session.cookie_samesite', 'strict');
+ini_set('session.use_strict_mode', 1);
+my_session_start();
+
 include ("dbconnect.php");
 
 if(isset($_GET["login"])) {
-    $name = $_POST["name"];
-    $passwort = $_POST["passwort"];
+    $name = test_input($_POST["name"]);
+    $passwort = test_input($_POST["passwort"]);
 
-    $sql = "SELECT * FROM user WHERE username = '$name'";
-    $erg = mysqli_query ($con, $sql);
-    $user = mysqli_fetch_array($erg);
+    $sql = $con->prepare("SELECT * FROM user WHERE username = ?");
+    $sql->bind_param("s", $name);
+    $sql->execute();
+    $erg = $sql->get_result();
+    $user = $erg->fetch_assoc();
+    $sql->close();
 
     //Überprüfung des Passworts
     if ($user !== NULL) {
         if (password_verify($passwort, $user['passwort'])) {
-        $_SESSION['userid'] = $user['userid'];
-        $_SESSION['username'] = $user['username'];
-        header("Location: startmenue.php");
+            my_session_regenerate_id();
+            $_SESSION['userid'] = $user['userid'];
+            $_SESSION['username'] = $user['username'];
+            header("Location: startmenue.php");
         } else {
-            echo "<script> alert('Das Passwort war ungültig.'); </script>";
+            echo "<script> alert('Username oder Passwort ungültig.'); </script>";
         }
     } else {
-        echo "<script> alert('Der Username war ungültig.'); </script>";
+        echo "<script> alert('Username oder Passwort ungültig.'); </script>";
     }
 }
 ?>

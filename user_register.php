@@ -1,5 +1,5 @@
 <?php
-session_start();
+include ("security.php");
 include("dbconnect.php");
 ?>
 
@@ -30,13 +30,17 @@ include("dbconnect.php");
 <?php
 if(isset($_GET["register"])) {
     $error = false;
-    $email = $_POST["email"];
-    $name = $_POST["name"];
-    $passwort = $_POST["passwort"];
-    $passwort2 = $_POST["passwort2"];
+    $email = test_input($_POST["email"]);
+    $name = test_input($_POST["name"]);
+    $passwort = test_input($_POST["passwort"]);
+    $passwort2 = test_input($_POST["passwort2"]);
 
     if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $fehlerText = "Bitte eine gültige E-Mail-Adresse eingeben";
+        $error = true;
+    }
+    if (!preg_match("/^[0-9a-zA-Z1 ]*$/",$name)) {
+        $fehlerText = "Bitte nur Buchstaben, Zahlen oder Leerzeichen im Benutzernamen";
         $error = true;
     }
     if(strlen($passwort) == 0) {
@@ -50,11 +54,14 @@ if(isset($_GET["register"])) {
 
     //Überprüfe, dass die E-Mail-Adresse noch nicht registriert wurde
     if(!$error) {
-        $sql = "SELECT * FROM user WHERE mail = '$email'";
-        $erg = mysqli_query ($con, $sql);
-        $user = mysqli_num_rows($erg);
+        $sql = $con->prepare("SELECT * FROM user WHERE mail = ?");
+        $sql->bind_param("s", $email);
+        $sql->execute();
+        $erg = $sql->get_result();
+        $user = $erg->fetch_assoc();
+        $sql->close();
 
-        if($user !== 0) {
+        if($user !== NULL) {
             $fehlerText = "Diese E-Mail-Adresse ist bereits vergeben";
             $error = true;
         }
@@ -62,11 +69,14 @@ if(isset($_GET["register"])) {
 
     //Überprüfe, dass der Username noch nicht registriert wurde
     if(!$error) {
-        $sql = "SELECT * FROM user WHERE username = '$name'";
-        $erg = mysqli_query ($con, $sql);
-        $user = mysqli_num_rows($erg);
+        $sql = $con->prepare("SELECT * FROM user WHERE username = ?");
+        $sql->bind_param("s", $name);
+        $sql->execute();
+        $erg = $sql->get_result();
+        $user = $erg->fetch_assoc();
+        $sql->close();
 
-        if($user !== 0) {
+        if($user !== NULL) {
             $fehlerText = "Dieser Username ist bereits vergeben";
             $error = true;
         }
@@ -76,8 +86,10 @@ if(isset($_GET["register"])) {
     if(!$error) {
         $passwort_hash = password_hash($passwort, PASSWORD_DEFAULT);
 
-        $sql = "INSERT INTO user (mail, username, passwort) VALUES ('$email', '$name', '$passwort_hash')";
-        $erg = mysqli_query ($con, $sql);
+        $sql = $con->prepare("INSERT INTO user (mail, username, passwort) VALUES (?, ?, ?)");
+        $sql->bind_param("sss", $email, $name, $passwort_hash);
+        $erg = $sql->execute();
+        $sql->close();
 
         if($erg) {
             echo "<script> alert(\"Registrierung erfolgreich.\\nWeiter zum Login.\"); window.location.href = \"user_login.php\"; </script>";

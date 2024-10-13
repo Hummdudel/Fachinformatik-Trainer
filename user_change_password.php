@@ -1,5 +1,6 @@
 <?php
-session_start();
+include("security.php");
+my_session_start();
 include ("user_handling.php");
 include("dbconnect.php");
 ?>
@@ -22,13 +23,16 @@ $zeigeFormular = true; //Variable ob das Registrierungsformular angezeigt werden
 
 if(isset($_GET["changePassword"])) {
     $error = false;
-    $passwortAlt = $_POST["passwortAlt"];
-    $passwortNeu = $_POST["passwortNeu"];
-    $passwortNeu2 = $_POST["passwortNeu2"];
+    $passwortAlt = test_input($_POST["passwortAlt"]);
+    $passwortNeu = test_input($_POST["passwortNeu"]);
+    $passwortNeu2 = test_input($_POST["passwortNeu2"]);
 
-    $sql = "SELECT * FROM user WHERE username = '$username'";
-    $erg = mysqli_query ($con, $sql);
-    $user = mysqli_fetch_array($erg);
+    $sql = $con->prepare("SELECT * FROM user WHERE username = ?");
+    $sql->bind_param("s", $username);
+    $sql->execute();
+    $erg = $sql->get_result();
+    $user = $erg->fetch_assoc();
+    $sql->close();
 
     //Überprüfung des alten Passworts
     if (!password_verify($passwortAlt, $user['passwort'])) {
@@ -45,11 +49,14 @@ if(isset($_GET["changePassword"])) {
     if (!$error) {
         $passwort_hash = password_hash($passwortNeu, PASSWORD_DEFAULT);
 
-        $sql = "UPDATE user SET passwort = '$passwort_hash' WHERE username = '$username'";
-        $erg = mysqli_query($con, $sql);
+        $sql = $con->prepare("UPDATE user SET passwort = ? WHERE username = ?");
+        $sql->bind_param("ss", $passwort_hash, $username);
+        $erg = $sql->execute();
+        $sql->close();
 
         if ($erg) {
             $loginText = "Das Passwort wurde erfolgreich geändert";
+            my_session_regenerate_id();
             session_destroy();
             session_unset();
             $_SESSION = "";

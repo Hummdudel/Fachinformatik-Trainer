@@ -1,5 +1,6 @@
 <?php
-session_start();
+include("security.php");
+my_session_start();
 include ("user_handling.php");
 include("dbconnect.php");
 
@@ -34,7 +35,7 @@ $zeigeDetails = false;
                 <h2><a class="linkIntern" href="k_anlegen.php">Karteikarten<br>anlegen</a></h2><br>
                 <h2><a class="linkIntern" href="k_bearbeiten.php">Karteikarten<br>bearbeiten</a></h2><br>
                 <h2><a class="linkIntern" href="k_loeschen.php">Karteikarten<br>löschen</a></h2>
-                <?php if($userid !== "1"){
+                <?php if($userid !== 1){
                     echo "<br><h2><a class=\"linkIntern\" href=\"k_veroeffentlichen.php\">Karteikarten<br>veröffentlichen</a></h2>";
                 } else {
                     echo "<br><h2><a class=\"linkIntern\" href=\"k_freigeben_admin.php\">Karteikarten<br>freigeben</a></h2>";

@@ -1,5 +1,6 @@
 <?php
-session_start();
+include("security.php");
+my_session_start();
 include ("user_handling.php");
 include("dbconnect.php");
 

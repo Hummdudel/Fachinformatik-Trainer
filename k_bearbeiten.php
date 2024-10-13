@@ -1,5 +1,6 @@
 <?php
-session_start();
+include("security.php");
+my_session_start();
 include ("user_handling.php");
 include("dbconnect.php");
 
@@ -34,7 +35,7 @@ $zeigeDetails = false;
                 <h2><a class="linkIntern" href="k_anlegen.php">Karteikarten<br>anlegen</a></h2><br>
                 <h2><a class="linkIntern" href="k_bearbeiten.php">Karteikarten<br>bearbeiten</a></h2><br>
                 <h2><a class="linkIntern" href="k_loeschen.php">Karteikarten<br>löschen</a></h2>
-                <?php if($userid !== "1"){
+                <?php if($userid !== 1){
                     echo "<br><h2><a class=\"linkIntern\" href=\"k_veroeffentlichen.php\">Karteikarten<br>veröffentlichen</a></h2>";
                 } else {
                     echo "<br><h2><a class=\"linkIntern\" href=\"k_freigeben_admin.php\">Karteikarten<br>freigeben</a></h2>";
@@ -63,14 +64,17 @@ $zeigeDetails = false;
                 if (isset($_GET["karte"])) {
                     $error = false;
 
-                    $frage = $_POST["frage"];
-                    $antwort = $_POST["antwort"];
+                    $frage = test_input($_POST["frage"]);
+                    $antwort = test_input($_POST["antwort"]);
                     $kartenid = $_POST["kartenid"]; // Wert aus dem versteckten Feld abrufen
 
                     //Überprüfe, dass es noch keine andere Karte mit dieser Frage gibt
-                    $sql = "SELECT * FROM lernkarten WHERE frage = '$frage' AND oeffentlich = TRUE AND kartenid != '$kartenid'";
-                    $erg = mysqli_query($con, $sql);
-                    $karte = mysqli_fetch_row($erg);
+                    $sql = $con->prepare("SELECT * FROM lernkarten WHERE frage = ? AND (userErstellt = ? OR oeffentlich = TRUE) AND kartenid != ?");
+                    $sql->bind_param("sii", $frage, $userid, $kartenid);
+                    $sql->execute();
+                    $erg = $sql->get_result();
+                    $karte = $erg->fetch_assoc();
+                    $sql->close();
 
                     if ($karte !== NULL) {
                         $fehlerText = "Es gibt bereits eine andere Karte mit dieser Frage.";
@@ -85,8 +89,10 @@ $zeigeDetails = false;
                         $oeffentlich = mysqli_fetch_row($erg);
 
                         if ($oeffentlich[6] == FALSE || ($oeffentlich[1] == $frage && $oeffentlich[2] == $antwort)) {
-                            $sql = "UPDATE lernkarten SET frage = '$frage', antwort = '$antwort' WHERE kartenid = '$kartenid'";
-                            $erg = mysqli_query($con, $sql);
+                            $sql = $con->prepare("UPDATE lernkarten SET frage = ?, antwort = ? WHERE kartenid = ?");
+                            $sql->bind_param("ssi", $frage, $antwort, $kartenid);
+                            $erg = $sql->execute();
+                            $sql->close();
 
                             if ($erg) {
                                 $fehlerText = "Karteikarte wurde erfolgreich geändert.";
@@ -94,8 +100,10 @@ $zeigeDetails = false;
                                 $fehlerText = "Beim Abspeichern ist leider ein Fehler aufgetreten.";
                             }
                         } else {
-                            $sql = "UPDATE lernkarten SET frage = '$frage', antwort = '$antwort', adminCheck = TRUE, oeffentlich = FALSE WHERE kartenid = '$kartenid'";
-                            $erg = mysqli_query($con, $sql);
+                            $sql = $con->prepare("UPDATE lernkarten SET frage = ?, antwort = ?, adminCheck = TRUE, oeffentlich = FALSE WHERE kartenid = ?");
+                            $sql->bind_param("ssi", $frage, $antwort, $kartenid);
+                            $erg = $sql->execute();
+                            $sql->close();
 
                             if ($erg) {
                                 $fehlerText = "Karteikarte wurde erfolgreich geändert und dem Admin erneut zur Freigabe vorgelegt.";
