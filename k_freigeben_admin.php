@@ -7,11 +7,8 @@ include("dbconnect.php");
 $kartenid = null; // Variable im globalen Bereich deklarieren
 
 if($username !== "admin") {
-    session_start();
-    session_destroy();
-    session_unset();
-    $_SESSION = "";
-    header("Location: index.html");
+    header('Location: user_login.php');
+    exit();
 }
 
 $zeigeFormular = false;
