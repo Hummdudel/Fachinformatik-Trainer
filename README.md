@@ -1,4 +1,4 @@
-#Fachinformatik-Trainer
+# Fachinformatik-Trainer
 
 Der [Fachinformatik-Trainer](https://fi-trainer.de/) ist eine Webanwendung, die ich im Rahmen des ersten Projekts (Webanwendung mit PHP, HTML, CSS und MySQL-Datenbank) im Juli 2024 während meiner Umschulung zum Fachinformatiker Anwendungsentwicklung bei der CBM Projektmanagement GmbH, Hamburg, entwickelt habe.
 
